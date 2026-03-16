@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя денежная полка 💰</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .money-shelf {
+            background: #8b4513;
+            padding: 20px;
+            border-radius: 10px 10px 5px 5px;
+            position: relative;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 0 #5a2e0c;
+        }
+        
+        /* Эффект деревянной полки */
+        .money-shelf::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #a0522d;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .shelf-content {
+            min-height: 150px;
+            background: #deb887;
+            border-radius: 5px;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .banknote {
+            background: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+            box-shadow: 0 4px 0 #1e7e34;
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+        }
+        
+        .banknote:nth-child(even) {
+            transform: rotate(3deg);
+            background: #ffc107;
+            color: #333;
+            box-shadow: 0 4px 0 #d39e00;
+        }
+        
+        .balance-card {
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .balance-amount {
+            font-size: 3.5em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .balance-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .button.withdraw {
+            background: #f44336;
+        }
+        
+        .button.reset {
+            background: #ff9800;
+            grid-column: span 2;
+        }
+        
+        .transaction-history {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .history-title {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .transaction-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            color: #666;
+        }
+        
+        .profit {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .loss {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Денежная полка</h1>
+        
+        <!-- Полка с деньгами (визуализация) -->
+        <div class="money-shelf">
+            <div class="shelf-content" id="moneyShelf">
+                <!-- Сюда JS будет добавлять купюры -->
+            </div>
+        </div>
+        
+        <!-- Баланс -->
+        <div class="balance-card">
+            <div class="balance-label">Текущий баланс</div>
+            <div class="balance-amount" id="balanceDisplay">0 ₽</div>
+        </div>
+        
+        <!-- Кнопки управления -->
+        <div class="controls">
+            <button class="button" onclick="addMoney()">➕ Добавить 1000 ₽</button>
+            <button class="button withdraw" onclick="withdrawMoney()">➖ Вывести 500 ₽</button>
+            <button class="button reset" onclick="resetMoney()">🔄 Сбросить полку</button>
+        </div>
+        
+        <!-- История транзакций -->
+        <div class="transaction-history">
+            <div class="history-title">📋 История операций</div>
+            <div id="transactionList">
+                <div class="transaction-item">Начните пополнять полку!</div>
+            </div>
+        </div>
+        
+        <footer>
+            🚀 Работает на GitHub Pages • Твоя личная полка с деньгами
+        </footer>
+    </div>
+
+    <script>
+        // Состояние приложения
+        let balance = 0;
+        let transactions = [];
+        
+        // Элементы DOM
+        const balanceDisplay = document.getElementById('balanceDisplay');
+        const moneyShelf = document.getElementById('moneyShelf');
+        const transactionList = document.getElementById('transactionList');
+        
+        // Функция обновления отображения денег на полке
+        function updateShelf() {
+            moneyShelf.innerHTML = ''; // Очищаем полку
+            
+            if (balance === 0) {
+                moneyShelf.innerHTML = '<div style="color: #666; text-align: center; width: 100%;">✨ Полка пуста. Добавьте деньги!</div>';
+                return;
+            }
+            
+            // Создаем визуальные купюры (1 купюра = 1000₽ для наглядности)
+            const banknoteCount = Math.ceil(balance / 1000);
+            for (let i = 0; i < banknoteCount; i++) {
+                if (i < 20) { // Ограничим до 20 купюр чтоб не сломать дизайн
+                    const banknote = document.createElement('div');
+                    banknote.className = 'banknote';
+                    
+                    // Разные номиналы для красоты
+                    if (i % 3 === 0) banknote.textContent = '1000₽';
+                    else if (i % 3 === 1) banknote.textContent = '2000₽';
+                    else banknote.textContent = '5000₽';
+                    
+                    moneyShelf.appendChild(banknote);
+                }
+            }
+            
+            // Если купюр больше 20, показываем счетчик
+            if (banknoteCount > 20) {
+                const counter = document.createElement('div');
+                counter.className = 'banknote';
+                counter.textContent = `+${banknoteCount - 20} купюр`;
+                counter.style.background = '#6c757d';
+                moneyShelf.appendChild(counter);
+            }
+        }
+        
+        // Функция обновления истории
+        function updateHistory() {
+            if (transactions.length === 0) {
+                transactionList.innerHTML = '<div class="transaction-item">📌 История пуста</div>';
+                return;
+            }
+            
+            transactionList.innerHTML = transactions.map(trans => {
+                const className = trans.amount > 0 ? 'profit' : 'loss';
+                const sign = trans.amount > 0 ? '+' : '';
+                return `<div class="transaction-item">
+                    <span class="${className}">${sign}${trans.amount} ₽</span> 
+                    - ${trans.date}
+                </div>`;
+            }).join('');
+        }
+        
+        // Функция добавления денег
+        function addMoney() {
+            const amount = 1000;
+            balance += amount;
+            
+            transactions.unshift({
+                amount: amount,
+                date: new Date().toLocaleString('ru-RU')
+            });
+            
+            // Ограничим историю 10 записями
+            if (transactions.length > 10) transactions.pop();
+            
+            updateDisplay();
+        }
+        
+        // Функция вывода денег
+        function withdrawMoney() {
+            if (balance >= 500) {
+                balance -= 500;
+                
+                transactions.unshift({
+                    amount: -500,
+                    date: new Date().toLocaleString('ru-RU')
+                });
+                
+                if (transactions.length > 10) transactions.pop();
+            } else {
+                alert('❌ Недостаточно средств на полке!');
+            }
+            
+            updateDisplay();
+        }
+        
+        // Функция сброса
+        function resetMoney() {
+            if (confirm('Точно очистить полку?')) {
+                balance = 0;
+                transactions = [];
+                updateDisplay();
+            }
+        }
+        
+        // Обновление всего интерфейса
+        function updateDisplay() {
+            balanceDisplay.textContent = balance.toLocaleString('ru-RU') + ' ₽';
+            updateShelf();
+            updateHistory();
+            
+            // Сохраняем в localStorage чтоб данные не пропадали при обновлении
+            localStorage.setItem('moneyBalance', balance);
+            localStorage.setItem('moneyTransactions', JSON.stringify(transactions));
+        }
+        
+        // Загрузка сохраненных данных
+        function loadSavedData() {
+            const savedBalance = localStorage.getItem('moneyBalance');
+            const savedTransactions = localStorage.getItem('moneyTransactions');
+            
+            if (savedBalance) balance = parseInt(savedBalance);
+            if (savedTransactions) transactions = JSON.parse(savedTransactions);
+            
+            updateDisplay();
+        }
+        
+        // Инициализация при загрузке
+        loadSavedData();
+    </script>
+</body>
+              </html>
